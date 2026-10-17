@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum SubmissionStatus {
+  PENDING
+  SENDING
+  ACCEPTED
+  FAILED
+  UNKNOWN
+}
+model Form {
+  id String @id @default(cuid())
+  label String
+  recipientName String
+  recipientEmail String
+  subject String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  keys ApiKey[]
+  submissions Submission[]
+}
+model ApiKey {
+  id String @id @default(cuid())
+  formId String
+  form Form @relation(fields: [formId], references: [id])
+  hash String @unique
+  prefix String
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+  submissions Submission[]
+  @@index([formId, revokedAt])
+}
+model Submission {
+  id String @id @default(cuid())
+  formId String
+  form Form @relation(fields: [formId], references: [id])
+  apiKeyId String
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id])
+  fields Json
+  recipientName String
+  recipientEmail String
+  subject String
+  status SubmissionStatus @default(PENDING)
+  brevoMessageId String?
+  errorCode String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([createdAt])
+  @@index([formId, createdAt])
+  @@index([apiKeyId])
+  @@index([status, updatedAt])
+}

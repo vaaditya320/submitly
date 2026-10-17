@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import './submitly.css';
 
 :root {
   --background: #ffffff;
@@ -19,8 +20,4 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+body { background: #faf9fc; color: #292636; font-family: Arial, Helvetica, sans-serif; }
